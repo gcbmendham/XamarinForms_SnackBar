@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Xamarin.Forms;
 
 namespace Xamarin.FormsSnackBarDemo
@@ -13,14 +14,22 @@ namespace Xamarin.FormsSnackBarDemo
 
         public MainPage()
         {
+            BindingContext = this;
+            //SnackBarButtonCommand = new Command(ButtonWasClicked);
+
             InitializeComponent();
         }
 
         private void Button_Clicked(object sender, EventArgs e)
         {
-            //SnackB.Message = "I'm a snack bar... I love showing my self.";
-            //SnackB.IsOpen = !SnackB.IsOpen;
             SnackB.Open($"Instance #{++i}.");
+        }
+
+        public ICommand SnackBarButtonCommand => new Command(ButtonWasClicked);
+
+        public void ButtonWasClicked()
+        {
+            SnackB.Close();
         }
     }
 }

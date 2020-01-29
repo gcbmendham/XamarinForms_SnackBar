@@ -10,16 +10,16 @@
                     HorizontalOptions="Center"
                     VerticalOptions="Center"/>
 
-            <local:SnackBar  x:Name="SnackB" HeightRequest="50" FontSize="{OnPlatform iOS=12, Android=13, UWP=15}" 
+            <local:SnackBar  x:Name="SnackB" HeightRequest="50" 
+                             FontSize="{OnPlatform iOS=13, Android=15, UWP=15}" 
                              BackgroundColor="#323232" 
-                             TimeoutDuration="4000"
-                             AnimationDuration="1000"
                              TextColor="White"
-                             IsOpen="False"
                              VerticalOptions="End"
-                             Message="I'm a snack bar... I love showing my self."
+                             Message="I'm a snack bar... I love showing myself."
                              ButtonTextColor="Orange"
-                             CloseButtonText="Exit"/>
+                             CloseButtonText="Exit"
+                             TimeoutDuration="4000"
+                             ButtonCommand="{Binding SnackBarButtonCommand}" />
         </Grid>
     </ContentPage.Content>
 

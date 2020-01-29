@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-
+using System.Windows.Input;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -13,9 +9,16 @@ namespace Xamarin.FormsSnackBarDemo
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class SnackBar : TemplatedView
     {
-        private Timer _timer;
-        private uint _animationDuration = 2000;
+        private readonly Timer _timer;
 
+        public SnackBar()
+        {
+            this.TranslateTo(0, 50, 0);  // ensure the snack bar is initially off-screen
+            _timer = new Timer(CloseOnTimeout);
+            InitializeComponent();
+        }
+
+        #region Bindable Properties
         public static readonly BindableProperty ButtonTextColorProperty = BindableProperty.Create("ButtonTextColor", typeof(Color), typeof(SnackBar), default(Color));
         public Color ButtonTextColor
         {
@@ -58,55 +61,6 @@ namespace Xamarin.FormsSnackBarDemo
             set { SetValue(CloseButtonBackGroundColorProperty, value); }
         }
 
-        public uint AnimationDuration
-        {
-            get => _animationDuration;
-            set { _animationDuration = value; }
-        }
-
-        public uint TimeoutDuration { get; set; }
-
-        #region IsOpen
-        //public static readonly BindableProperty IsOpenProperty = BindableProperty.Create("IsOpen", typeof(bool), typeof(SnackBar), false, propertyChanged: IsOpenChanged);
-        //public bool IsOpen
-        //{
-        //    get { return (bool)GetValue(IsOpenProperty); }
-        //    set { SetValue(IsOpenProperty, value); }
-        //}
-
-        //private static void IsOpenChanged(BindableObject bindable, object oldValue, object newValue)
-        //{
-        //    bool isOpen;
-
-        //    if (bindable != null && newValue != null)
-        //    {
-        //        var control = (SnackBar)bindable;
-        //        isOpen = (bool)newValue;
-
-        //        if (isOpen)
-        //        {
-        //            control.Close();
-        //        }
-        //        else
-        //        {
-        //            control.Open(control.Message);
-        //        }
-
-
-        //        //if (control.IsOpen == false)
-        //        //{
-        //        //    control.Close();
-        //        //}
-        //        //else
-        //        //{
-        //        //    control.Open(control.Message);
-        //        //}
-        //    }
-        //}
-
-        public bool IsOpen { get; set; }
-        #endregion
-
         public static readonly BindableProperty FontFamilyProperty = BindableProperty.Create("FontFamily", typeof(string), typeof(SnackBar), default(string));
         public string FontFamily
         {
@@ -114,40 +68,56 @@ namespace Xamarin.FormsSnackBarDemo
             set { SetValue(FontFamilyProperty, value); }
         }
 
-        public SnackBar()
+        public static readonly BindableProperty ButtonCommandProperty =
+            BindableProperty.Create(nameof(ButtonCommand), typeof(ICommand), typeof(SnackBar), null);
+
+        public ICommand ButtonCommand
         {
-            IsVisible = false;
-            _timer = new Timer(CloseAfterTimeout);
-            InitializeComponent();
+            get => (ICommand)GetValue(ButtonCommandProperty);
+            set { SetValue(ButtonCommandProperty, value); }
         }
 
-        private void CloseAfterTimeout(object state)
+        static void OnButtonCommandPropertyChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            Device.BeginInvokeOnMainThread(() => Close());
+            if (bindable is SnackBar snackBar && newValue is ICommand command)
+            {
+                snackBar.ButtonCommand = command;
+            }
         }
+        #endregion
 
-        private void CloseButton_Clicked(object sender, EventArgs e)
+
+        #region Properties
+        public uint AnimationDuration { get; set; } = 200;
+
+        public uint TimeoutDuration { get; set; }
+
+        #endregion
+
+        private void CloseOnTimeout(object state) => Device.BeginInvokeOnMainThread(() => Close());
+
+        private void Button_Clicked(object sender, EventArgs e)
         {
-            Close();
+            if (ButtonCommand == null) 
+                return;
+
+            if (ButtonCommand.CanExecute(null))
+                ButtonCommand.Execute(null);
         }
 
         public async void Close()
         {
             Message = string.Empty;
             await this.TranslateTo(0, 50, AnimationDuration);
-            IsOpen = false;
-            IsVisible = false;
         }
 
         public async void Open(string message)
         {
             Message = message;
-            IsVisible = true;
-            //if (TimeoutDuration > 0)
-            //    _timer.Change(TimeoutDuration, Timeout.Infinite);
+            if (TimeoutDuration > 0)
+                _timer.Change(TimeoutDuration, Timeout.Infinite);
 
             await this.TranslateTo(0, 0, AnimationDuration);
-            IsOpen = true;
         }
     }
 }

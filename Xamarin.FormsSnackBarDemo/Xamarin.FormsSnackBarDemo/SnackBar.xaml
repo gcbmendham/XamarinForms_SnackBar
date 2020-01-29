@@ -13,12 +13,12 @@
                        FontFamily="{TemplateBinding FontFamily}"/>
 
                 <Button Grid.Column="1" HorizontalOptions="End"
-                        Clicked="CloseButton_Clicked" Margin="2"
                         FontFamily="{TemplateBinding FontFamily}"
                         FontSize="{TemplateBinding FontSize}"
                         TextColor="{TemplateBinding ButtonTextColor}"
                         BackgroundColor="{TemplateBinding CloseButtonBackGroundColor}"
-                        VerticalOptions="Center" Text="{TemplateBinding CloseButtonText}"/>
+                        VerticalOptions="Center" Text="{TemplateBinding CloseButtonText}"
+                        Clicked="Button_Clicked" Margin="2" />
             </Grid>
         </ControlTemplate>
     </TemplatedView.ControlTemplate>
