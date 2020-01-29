@@ -12,6 +12,8 @@
 
             <local:SnackBar  x:Name="SnackB" HeightRequest="50" FontSize="{OnPlatform iOS=12, Android=13, UWP=15}" 
                              BackgroundColor="#323232" 
+                             TimeoutDuration="4000"
+                             AnimationDuration="1000"
                              TextColor="White"
                              IsOpen="False"
                              VerticalOptions="End"

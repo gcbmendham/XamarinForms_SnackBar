@@ -15,7 +15,7 @@
                 <Button Grid.Column="1" HorizontalOptions="End"
                         Clicked="CloseButton_Clicked" Margin="2"
                         FontFamily="{TemplateBinding FontFamily}"
-                        FontSize="{TemplateBinding FontSisze}"
+                        FontSize="{TemplateBinding FontSize}"
                         TextColor="{TemplateBinding ButtonTextColor}"
                         BackgroundColor="{TemplateBinding CloseButtonBackGroundColor}"
                         VerticalOptions="Center" Text="{TemplateBinding CloseButtonText}"/>

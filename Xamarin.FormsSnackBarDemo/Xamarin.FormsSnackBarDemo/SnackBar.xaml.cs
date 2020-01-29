@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
@@ -9,9 +10,12 @@ using Xamarin.Forms.Xaml;
 
 namespace Xamarin.FormsSnackBarDemo
 {
-	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class SnackBar : TemplatedView
+    [XamlCompilation(XamlCompilationOptions.Compile)]
+    public partial class SnackBar : TemplatedView
     {
+        private Timer _timer;
+        private uint _animationDuration = 2000;
+
         public static readonly BindableProperty ButtonTextColorProperty = BindableProperty.Create("ButtonTextColor", typeof(Color), typeof(SnackBar), default(Color));
         public Color ButtonTextColor
         {
@@ -54,36 +58,53 @@ namespace Xamarin.FormsSnackBarDemo
             set { SetValue(CloseButtonBackGroundColorProperty, value); }
         }
 
-        public uint AnimationDuration { get; set; }
+        public uint AnimationDuration
+        {
+            get => _animationDuration;
+            set { _animationDuration = value; }
+        }
+
+        public uint TimeoutDuration { get; set; }
 
         #region IsOpen
-        public static readonly BindableProperty IsOpenProperty = BindableProperty.Create("IsOpen", typeof(bool), typeof(SnackBar), false, propertyChanged: IsOpenChanged);
-        public bool IsOpen
-        {
-            get { return (bool)GetValue(IsOpenProperty); }
-            set { SetValue(IsOpenProperty, value); }
-        }
+        //public static readonly BindableProperty IsOpenProperty = BindableProperty.Create("IsOpen", typeof(bool), typeof(SnackBar), false, propertyChanged: IsOpenChanged);
+        //public bool IsOpen
+        //{
+        //    get { return (bool)GetValue(IsOpenProperty); }
+        //    set { SetValue(IsOpenProperty, value); }
+        //}
 
-        private static void IsOpenChanged(BindableObject bindable, object oldValue, object newValue)
-        {
-            bool isOpen;
+        //private static void IsOpenChanged(BindableObject bindable, object oldValue, object newValue)
+        //{
+        //    bool isOpen;
 
-            if (bindable != null && newValue != null)
-            {
-                var control = (SnackBar)bindable;
-                isOpen = (bool)newValue;
+        //    if (bindable != null && newValue != null)
+        //    {
+        //        var control = (SnackBar)bindable;
+        //        isOpen = (bool)newValue;
 
-                if (control.IsOpen == false)
-                {
-                    control.Close();
-                }
-                else
-                {
-                    control.Open(control.Message);
-                }
-            }
-        }
+        //        if (isOpen)
+        //        {
+        //            control.Close();
+        //        }
+        //        else
+        //        {
+        //            control.Open(control.Message);
+        //        }
 
+
+        //        //if (control.IsOpen == false)
+        //        //{
+        //        //    control.Close();
+        //        //}
+        //        //else
+        //        //{
+        //        //    control.Open(control.Message);
+        //        //}
+        //    }
+        //}
+
+        public bool IsOpen { get; set; }
         #endregion
 
         public static readonly BindableProperty FontFamilyProperty = BindableProperty.Create("FontFamily", typeof(string), typeof(SnackBar), default(string));
@@ -93,12 +114,17 @@ namespace Xamarin.FormsSnackBarDemo
             set { SetValue(FontFamilyProperty, value); }
         }
 
-        public SnackBar ()
-		{
+        public SnackBar()
+        {
             IsVisible = false;
-            AnimationDuration = 1000;
-			InitializeComponent ();
-		}
+            _timer = new Timer(CloseAfterTimeout);
+            InitializeComponent();
+        }
+
+        private void CloseAfterTimeout(object state)
+        {
+            Device.BeginInvokeOnMainThread(() => Close());
+        }
 
         private void CloseButton_Clicked(object sender, EventArgs e)
         {
@@ -107,16 +133,21 @@ namespace Xamarin.FormsSnackBarDemo
 
         public async void Close()
         {
-            await this.TranslateTo(0, 50, AnimationDuration);
             Message = string.Empty;
-            IsOpen = IsVisible = false;
+            await this.TranslateTo(0, 50, AnimationDuration);
+            IsOpen = false;
+            IsVisible = false;
         }
 
         public async void Open(string message)
         {
-            IsVisible = true;
             Message = message;
+            IsVisible = true;
+            //if (TimeoutDuration > 0)
+            //    _timer.Change(TimeoutDuration, Timeout.Infinite);
+
             await this.TranslateTo(0, 0, AnimationDuration);
+            IsOpen = true;
         }
     }
 }
