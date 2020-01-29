@@ -96,7 +96,7 @@ namespace Xamarin.FormsSnackBarDemo
         public SnackBar ()
 		{
             IsVisible = false;
-            AnimationDuration = 150;
+            AnimationDuration = 1000;
 			InitializeComponent ();
 		}
 
