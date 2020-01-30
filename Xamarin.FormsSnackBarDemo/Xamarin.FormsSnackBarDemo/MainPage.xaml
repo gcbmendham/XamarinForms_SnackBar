@@ -13,13 +13,14 @@
             <local:SnackBar  x:Name="SnackB"
                              FontSize="{OnPlatform iOS=13, Android=15, UWP=15}" 
                              BackgroundColor="#323232" 
-                             TextColor="White"
-                             VerticalOptions="End"
                              Message="I'm a snack bar... I love showing myself."
-                             ButtonTextColor="Orange"
                              ButtonText="Exit"
-                             TimeoutDuration="0"
+                             TimeoutDuration="4000"
                              ButtonCommand="{Binding SnackBarButtonCommand}" />
+
+            <!-- VerticalOptions="End"  - this is now set in the TemplatedView -->
+
+
         </Grid>
     </ContentPage.Content>
 

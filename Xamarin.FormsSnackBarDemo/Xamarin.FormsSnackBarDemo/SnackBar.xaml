@@ -2,7 +2,8 @@
 <TemplatedView xmlns="http://xamarin.com/schemas/2014/forms"
                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                x:Class="Xamarin.FormsSnackBarDemo.SnackBar"
-               >
+               VerticalOptions="End"
+               BackgroundColor="Black" >
     <TemplatedView.ControlTemplate>
         <ControlTemplate>
             <Grid HeightRequest="{TemplateBinding HeightRequest}">

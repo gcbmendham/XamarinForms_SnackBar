@@ -15,21 +15,23 @@ namespace Xamarin.FormsSnackBarDemo
         public MainPage()
         {
             BindingContext = this;
-            //SnackBarButtonCommand = new Command(ButtonWasClicked);
 
             InitializeComponent();
         }
 
         private void Button_Clicked(object sender, EventArgs e)
         {
-            SnackB.Open($"Instance #{++i}.");
+            SnackB.Message=$"Instance #{++i}.";
+            //await SnackB.Open();
+            SnackB.IsShown = true;
         }
 
         public ICommand SnackBarButtonCommand => new Command(ButtonWasClicked);
 
         public void ButtonWasClicked()
         {
-            SnackB.Close();
+            //await SnackB.Close();
+            SnackB.IsShown = false;
         }
     }
 }

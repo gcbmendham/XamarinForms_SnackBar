@@ -10,13 +10,17 @@ namespace Xamarin.FormsSnackBarDemo
     public partial class SnackBar : TemplatedView
     {
         private readonly Timer _timer;
+        private bool _isShown;
 
         public SnackBar()
         {
             InitializeComponent();
 
-            _timer = new Timer(CloseOnTimeout);
-            this.TranslateTo(0, HeightRequest, 0);  // ensure the snack bar is initially off-screen
+            // SnackBar is initially hidden
+            ShowHide(false);
+
+            // When the timer times out it should close the SnackBar
+            _timer = new Timer( o => ShowHide(false) );
         }
 
         #region Bindable Properties
@@ -34,7 +38,7 @@ namespace Xamarin.FormsSnackBarDemo
             set { SetValue(HeightRequestProperty, value); }
         }
 
-        public static readonly BindableProperty ButtonTextColorProperty = BindableProperty.Create(nameof(ButtonTextColor), typeof(Color), typeof(SnackBar), default(Color));
+        public static readonly BindableProperty ButtonTextColorProperty = BindableProperty.Create(nameof(ButtonTextColor), typeof(Color), typeof(SnackBar), Color.Orange);
         public Color ButtonTextColor
         {
             get => (Color)GetValue(ButtonTextColorProperty);
@@ -92,13 +96,6 @@ namespace Xamarin.FormsSnackBarDemo
             set { SetValue(ButtonCommandProperty, value); }
         }
 
-        //static void OnButtonCommandPropertyChanged(BindableObject bindable, object oldValue, object newValue)
-        //{
-        //    if (bindable is SnackBar snackBar && newValue is ICommand command)
-        //    {
-        //        snackBar.ButtonCommand = command;
-        //    }
-        //}
         #endregion
 
         #region Properties
@@ -107,9 +104,19 @@ namespace Xamarin.FormsSnackBarDemo
 
         public uint TimeoutDuration { get; set; }
 
-        #endregion
+        public bool IsShown
+        {
+            get => _isShown;
+            set {
+                // Don't check to see if the value changed.  We may want to show the SnackBar
+                // even while it is currently shown.  That way the timer (if set) will start
+                // a fresh countdown every time that ShowHide(true) is called.
+                _isShown = value;
+                ShowHide(value);
+            }
+        }
 
-        private void CloseOnTimeout(object state) => Device.BeginInvokeOnMainThread(() => Close());
+        #endregion
 
         private void Button_Clicked(object sender, EventArgs e)
         {
@@ -120,19 +127,18 @@ namespace Xamarin.FormsSnackBarDemo
                 ButtonCommand.Execute(null);
         }
 
-        public async void Close()
+        private void ShowHide(bool show)
         {
-            Message = string.Empty;
-            await this.TranslateTo(0, HeightRequest, AnimationDuration);
-        }
+            int heightRequest = HeightRequest;
 
-        public async void Open(string message)
-        {
-            Message = message;
-            if (TimeoutDuration > 0)
-                _timer.Change(TimeoutDuration, Timeout.Infinite);
+            if (show)
+            {
+                heightRequest = 0;
+                if (TimeoutDuration > 0)
+                    _timer.Change(TimeoutDuration, Timeout.Infinite);
+            }
 
-            await this.TranslateTo(0, 0, AnimationDuration);
+            this.TranslateTo(0, heightRequest, AnimationDuration);
         }
     }
 }
