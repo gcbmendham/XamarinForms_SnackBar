@@ -1,24 +1,29 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<TemplatedView xmlns="http://xamarin.com/schemas/2014/forms" 
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Xamarin.FormsSnackBarDemo.SnackBar">
+<TemplatedView xmlns="http://xamarin.com/schemas/2014/forms"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               x:Class="Xamarin.FormsSnackBarDemo.SnackBar"
+               >
     <TemplatedView.ControlTemplate>
         <ControlTemplate>
-            <Grid>
+            <Grid HeightRequest="{TemplateBinding HeightRequest}">
                 <Label Text="{TemplateBinding Message}"
-                       VerticalOptions="Center" HorizontalOptions="FillAndExpand"
-                       Margin="20, 5, 5, 5" LineBreakMode="WordWrap"
+                       HorizontalOptions="FillAndExpand" 
+                       VerticalOptions="Center"
+                       Margin="20, 5, 5, 5" 
+                       LineBreakMode="WordWrap"
                        FontSize="{TemplateBinding FontSize}"
                        TextColor="{TemplateBinding TextColor}"
                        FontFamily="{TemplateBinding FontFamily}"/>
 
-                <Button Grid.Column="1" HorizontalOptions="End"
+                <Button Grid.Column="1" 
+                        HorizontalOptions="End"
                         FontFamily="{TemplateBinding FontFamily}"
                         FontSize="{TemplateBinding FontSize}"
                         TextColor="{TemplateBinding ButtonTextColor}"
-                        BackgroundColor="{TemplateBinding CloseButtonBackGroundColor}"
-                        VerticalOptions="Center" Text="{TemplateBinding CloseButtonText}"
-                        Clicked="Button_Clicked" Margin="2" />
+                        BackgroundColor="{TemplateBinding ButtonBackGroundColor}"
+                        VerticalOptions="Center" Text="{TemplateBinding ButtonText}"
+                        Clicked="Button_Clicked" 
+                        Margin="2" />
             </Grid>
         </ControlTemplate>
     </TemplatedView.ControlTemplate>
